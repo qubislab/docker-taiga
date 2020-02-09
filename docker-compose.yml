@@ -2,7 +2,7 @@ version: '3'
 
 services:
   back:
-    image: dockertaiga/back:5.0.6
+    image: qubis/taiga-back
     container_name: taiga-back
     restart: unless-stopped
     depends_on:
@@ -11,19 +11,19 @@ services:
     networks:
       - default
     volumes:
-      - ./data/media:/taiga-media
-      - ./conf/back:/taiga-conf
+      - ${DOCKER_DATA_DIR}/taiga/media:/taiga-media
+      - ${DOCKER_DATA_DIR}/taiga/conf/back:/taiga-conf
     env_file:
       - variables.env
 
   front:
-    image: dockertaiga/front:5.0.6
+    image: qubis/taiga-front
     container_name: taiga-front
     restart: unless-stopped
     networks:
       - default
     volumes:
-      - ./conf/front:/taiga-conf
+      - ${DOCKER_DATA_DIR}/taiga/conf/front:/taiga-conf
     env_file:
       - variables.env
 
@@ -36,10 +36,10 @@ services:
     env_file:
       - variables.env
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ${DOCKER_DATA_DIR}/taiga/db:/var/lib/postgresql/data
 
   rabbit:
-    image: dockertaiga/rabbit
+    image: qubis/taiga-rabbit
     container_name: taiga-rabbit
     restart: unless-stopped
     networks:
@@ -48,7 +48,7 @@ services:
       - variables.env
 
   events:
-    image: dockertaiga/events
+    image: qubis/taiga-events
     container_name: taiga-events
     restart: unless-stopped
     depends_on:
@@ -59,7 +59,7 @@ services:
       - variables.env
 
   proxy:
-    image: dockertaiga/proxy
+    image: qubis/taiga-proxy
     container_name: taiga-proxy
     restart: unless-stopped
     depends_on:
@@ -69,11 +69,11 @@ services:
     networks:
       - default
     ports:
-      - 80:80
-      - 443:443
+      - 9180:80
+      - 9443:443
     volumes:
-      #- ./cert:/taiga-cert
-      - ./conf/proxy:/taiga-conf
+      #- ${DOCKER_DATA_DIR}/taiga/cert:/taiga-cert
+      - ${DOCKER_DATA_DIR}/taiga/conf/proxy:/taiga-conf
     env_file:
       - variables.env
 
